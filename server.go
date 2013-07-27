@@ -11,6 +11,7 @@ type StorageInterface interface {
 }
 
 func Run(addr string){
+	//fmt.Printf("listening on %s (accessing riak: %s)\n", addr, riak_addr)
 	fmt.Printf("listening on %s\n", addr)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
