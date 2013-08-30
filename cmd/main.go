@@ -26,7 +26,6 @@ func main() {
 	switch *subcmd {
 	case "memcache":
 		dicorn.Run(*listen)
-
 	case "help": usage()
 	default:     usage()
 	}

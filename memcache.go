@@ -32,6 +32,80 @@ func (m *MemcacheAPI) set(key string, flag, expire, size int, value []byte, conn
 		conn.Write([]byte("STORED\r\n"))
 	} // else 
 }
+func (m *MemcacheAPI) get(key string, conn net.Conn) {
+	m.mutex.Lock()
+	v := m.data[key]
+	m.mutex.Unlock()
+	ret_str := fmt.Sprintf("VALUE %s 0 %d\r\n", key, len(v))
+	conn.Write([]byte(ret_str))
+	conn.Write(v)
+	conn.Write([]byte("\r\n"))
+}
+
+func (m *MemcacheAPI) delete(key string, conn net.Conn) {
+	m.mutex.Lock()
+	_, ok := m.data[key]
+	str := ""
+	if ok {
+		delete(m.data, key)
+		str = "DELETED"
+	} else {
+		str = "NOT_FOUND"
+	}
+	m.mutex.Unlock()
+	ret_str := fmt.Sprintf("%s\r\n", str)
+	conn.Write([]byte(ret_str))
+}
+
+func (m *MemcacheAPI) incr(key, value string, conn net.Conn) {
+	m.mutex.Lock()
+	v, ok := m.data[key]
+	str := ""
+	if ok {
+		v0, e0 := strconv.Atoi(string(v))
+		v1, e1 := strconv.Atoi(value)
+		if e0 == nil && e1 == nil {
+			str = fmt.Sprintf("%d", v0 + v1)
+			m.data[key] = []byte(str)
+		} else {
+			str = "ERROR?"
+		}
+	} else {
+		str = "NOT_FOUND"
+	}
+	m.mutex.Unlock()
+	ret_str := fmt.Sprintf("%s\r\n", str)
+	conn.Write([]byte(ret_str))
+}
+
+func max(lhs, rhs int) (int) {
+	ret := rhs
+	if lhs >= rhs {
+		return lhs
+	}
+	return ret
+}
+
+func (m *MemcacheAPI) decr(key, value string, conn net.Conn) {
+	m.mutex.Lock()
+	v, ok := m.data[key]
+	str := ""
+	if ok {
+		v0, e0 := strconv.Atoi(string(v))
+		v1, e1 := strconv.Atoi(value)
+		if e0 == nil && e1 == nil {
+			str = fmt.Sprintf("%d", max(v0 - v1, 0))
+			m.data[key] = []byte(str)
+		} else {
+			str = "ERROR"
+		}
+	} else {
+		str = "NOT_FOUND"
+	}
+	m.mutex.Unlock()
+	ret_str := fmt.Sprintf("%s\r\n", str)
+	conn.Write([]byte(ret_str))
+}
 
 func (m *MemcacheAPI) HandleBytes(buf []byte, conn net.Conn) {
 
@@ -75,18 +149,23 @@ func (m *MemcacheAPI) HandleBytes(buf []byte, conn net.Conn) {
 			//Retrieval command
 		case "get":
 			k := string(tokens[1])
-			m.mutex.Lock()
-			v := m.data[k]
-			m.mutex.Unlock()
-			ret_str := fmt.Sprintf("VALUE %s 0 %d\r\n", k, len(v))
-			conn.Write([]byte(ret_str))
-			conn.Write(v)
-			conn.Write([]byte("\r\n"))
+			m.get(k, conn)
 
 		//case "gets":
-		//case "delete":
-		//case "incr":
-		//case "decr":
+		case "delete":
+			k := string(tokens[1])
+			m.delete(k, conn)
+
+		case "incr":
+			k := string(tokens[1])
+			v := string(tokens[2])
+			m.incr(k, v, conn)
+
+		case "decr":
+			k := string(tokens[1])
+			v := string(tokens[2])
+			m.decr(k, v, conn)
+
 		//case "touch":
 		//case "slabs":
 		//case "stats":
