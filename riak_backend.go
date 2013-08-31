@@ -2,8 +2,10 @@ package dicorn
 
 import (
 	"strings"
-	// "github.com/mrb/riakpbc"
+	"github.com/mrb/riakpbc"
 )
+
+const BUCKET = "fake_memcached"
 
 type RiakBackend struct {
 	hosts []string
@@ -15,21 +17,34 @@ func NewRiakBackend(hosts string) *RiakBackend {
 	return &RiakBackend{hosts: h}
 }
 
-func (mb *RiakBackend) Init() {
+func (rb *RiakBackend) Init() {
 }
 
-func (mb *RiakBackend) Set(key string, flag, expire, size int, value []byte) error {
+func (rb *RiakBackend) Set(key string, flag, expire, size int, value []byte) error {
+	c := rb.connect()
+	_, err := c.StoreObject(BUCKET, key, value)
+	c.Close()
+	return err
+}
+func (rb *RiakBackend) Get(key string) ([]byte, error) {
+	c := rb.connect()
+	obj, err := c.FetchObject(BUCKET, key)
+	c.Close()
+	if err != nil {
+		return nil, &NotFoundError{}
+	}
+	return (obj.GetContent()[0].GetValue()), nil
+}
+func (rb *RiakBackend) Delete(key string) error {
 	return &NotFoundError{}
 }
-func (mb *RiakBackend) Get(key string) ([]byte, error) {
-	return nil, &NotFoundError{}
-}
-func (mb *RiakBackend) Delete(key string) error {
-	return &NotFoundError{}
-}
-func (mb *RiakBackend) Incr(key string, value int) (int, error) {
+func (rb *RiakBackend) Incr(key string, value int) (int, error) {
 	return 0, &NotFoundError{}
 }
-func (mb *RiakBackend) Decr(key string, value int) (int, error) {
+func (rb *RiakBackend) Decr(key string, value int) (int, error) {
 	return 0, &NotFoundError{}
+}
+
+func (rb *RiakBackend) connect() *riakpbc.Client {
+	return riakpbc.NewClient(rb.hosts)
 }
