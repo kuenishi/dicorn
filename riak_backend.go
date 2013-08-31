@@ -1,13 +1,23 @@
 package dicorn
 
-type RiakBackend struct{}
+import (
+	"strings"
+	// "github.com/mrb/riakpbc"
+)
+
+type RiakBackend struct {
+	hosts []string
+}
 
 func NewRiakBackend(hosts string) *RiakBackend {
-	return nil
+	h := strings.Split(hosts, ",")
+	// TODO: check riak existence here
+	return &RiakBackend{hosts: h}
 }
 
 func (mb *RiakBackend) Init() {
 }
+
 func (mb *RiakBackend) Set(key string, flag, expire, size int, value []byte) error {
 	return &NotFoundError{}
 }

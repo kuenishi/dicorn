@@ -14,7 +14,6 @@ func usage() {
 }
 
 func main() {
-	//os.Getenv("HOME") + "/.s3cfg")
 
 	flag.Usage = usage
 	//front
