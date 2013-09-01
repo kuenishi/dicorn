@@ -5,6 +5,7 @@ import (
 	"os"
 	"flag"
 	"dicorn"
+	"log"
 )
 
 func usage() {
@@ -25,6 +26,7 @@ func main() {
 	flag.Parse()
 	// fmt.Printf("%v %v %v\n", *subcmd, *listen, *riak_hosts)
 
+	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 	switch *subcmd {
 	case "memcache":
 		dicorn.Run(*listen, *backend, *backend_hosts)

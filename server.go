@@ -1,7 +1,8 @@
 package dicorn
 
 import (
-	"fmt"
+	"io"
+	"log"
 	"net"
 	"os"
 )
@@ -15,9 +16,9 @@ func Version() string {
 }
 
 func Run(addr, backend_type, backend_hosts string) {
-	//fmt.Printf("listening on %s (accessing riak: %s)\n", addr, riak_addr)
-	fmt.Printf("listening on %s\n", addr)
-	fmt.Printf("backend: %s\n", backend_type)
+	//log.Printf("listening on %s (accessing riak: %s)\n", addr, riak_addr)
+	log.Printf("listening on %s\n", addr)
+	log.Printf("backend: %s\n", backend_type)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		println("error")
@@ -39,18 +40,25 @@ func Run(addr, backend_type, backend_hosts string) {
 func handleAccept(conn net.Conn, api StorageInterface) {
 	defer func() {
 		conn.Close()
-		fmt.Printf("%s connection from %s closed\n",
-			conn.RemoteAddr().Network(),
-			conn.RemoteAddr().String())
+		// log.Printf("%s connection from %s closed\n",
+		// 	conn.RemoteAddr().Network(),
+		// 	conn.RemoteAddr().String())
 	}()
 	buf := make([]byte, 65536)
 	for {
 		n, err := conn.Read(buf)
-		if err != nil {
-			println("fail on reading, or probably disconneted")
+		if err == io.EOF {
+			log.Printf("connection closed: %s\n", err.Error())
+			return
+		} else if neterr, ok := err.(net.Error); ok && neterr.Timeout() {
+			log.Printf("timeout: %s\n", err.Error())
+			return
+		} else if err != nil {
+			// log.Printf("fail on reading, or probably disconneted: %s\n", err.Error())
+			log.Printf(err.Error())
 			return
 		}
-		//fmt.Printf("%s connection from %s, recv'd %d bytes\n",
+		//log.Printf("%s connection from %s, recv'd %d bytes\n",
 		//conn.RemoteAddr().Network(), conn.RemoteAddr().String(), n)
 
 		// TODO: handlebytes cannot handle boundary well,
