@@ -2,8 +2,8 @@
 
 all: dicorn
 
-dicorn: main.go
-	go build -o $@
+dicorn: cmd/main.go *.go
+	go build -o $@ $<
 
 clean:
 	-rm -rf dicorn

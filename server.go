@@ -39,17 +39,20 @@ func Run(addr, backend_type, backend_hosts string) {
 func handleAccept(conn net.Conn, api StorageInterface) {
 	defer func() {
 		conn.Close()
-		fmt.Printf("connection from %v closed\n", conn)
+		fmt.Printf("%s connection from %s closed\n",
+			conn.RemoteAddr().Network(),
+			conn.RemoteAddr().String())
 	}()
 	buf := make([]byte, 65536)
 	for {
 		n, err := conn.Read(buf)
 		if err != nil {
-			println("fail on reading")
+			println("fail on reading, or probably disconneted")
 			return
 		}
-		fmt.Printf("%s connection from %s, recv'd %d bytes\n",
-			conn.RemoteAddr().Network(), conn.RemoteAddr().String(), n)
+		//fmt.Printf("%s connection from %s, recv'd %d bytes\n",
+		//conn.RemoteAddr().Network(), conn.RemoteAddr().String(), n)
+
 		// TODO: handlebytes cannot handle boundary well,
 		// this function currently assumes this buf[:n]
 		// with ending in message boundary.

@@ -20,7 +20,32 @@ Dunno all of this get success.
 
 ## Riak client
 
-Currently [goriakpbc](https://github.com/tpjg/goriakpbc) and [riakpbc](https://github.com/mrb/riakpbc) looks fine. Which to choose.
+Currently using [riakpbc](https://github.com/mrb/riakpbc). Another option is [goriakpbc](https://github.com/tpjg/goriakpbc) .
+
+## bench
+
+memcached
+
+```
+$ ./memcached
+...
+$ ./clients/memslap  --servers=localhost:11211 --non-blocking --concurrency=10
+	Threads connecting to servers 10
+	Took 1.987 seconds to load data
+```
+
+dicorn
+
+```
+$ ./dicorn -backend=mem -cmd=memcache -listen=localhost:11211
+listening on localhost:11211
+backend: mem
+...
+$ ./clients/memslap  --servers=localhost:11211 --non-blocking --concurrency=10
+	Threads connecting to servers 10
+	Took 2.705 seconds to load data
+```
+
 
 ## version
 
