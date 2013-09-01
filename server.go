@@ -11,7 +11,7 @@ type StorageInterface interface {
 }
 
 func Version() string {
-	return "dicorn 0.0.1"
+	return "dicorn version -200M"
 }
 
 func Run(addr, backend_type, backend_hosts string) {
