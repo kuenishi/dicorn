@@ -18,6 +18,17 @@ Dunno all of this get success.
 
 - [memcache interface](https://github.com/memcached/memcached/blob/master/doc/protocol.txt)
 
+## quickstart
+
+[Install Go](http://golang.org/doc/install) . Clone this repo and build.
+
+```sh
+$ git clone git://github.com/kuenishi/dicorn
+$ cd dicorn
+$ go get
+$ make
+```
+
 ## Riak client
 
 Currently using [riakpbc](https://github.com/mrb/riakpbc). Another option is [goriakpbc](https://github.com/tpjg/goriakpbc) .
