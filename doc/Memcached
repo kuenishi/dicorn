@@ -1,0 +1,12 @@
+# Memcached
+
+Status of API support
+
+## Current
+
+PUT/GET/DELETE
+
+## Future
+
+- incr,decr via Riak's counter
+- append etc via Riak's CRDT

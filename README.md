@@ -89,6 +89,4 @@ Apache 2.0
 
 ## misc.
 
-Cassandra interface is generaged via [go-thrift by @samuel](https://github.com/samuel/go-thrift) .
-
 Also using [goprotobuf](https://code.google.com/p/goprotobuf/) for Protocol Buffers.
