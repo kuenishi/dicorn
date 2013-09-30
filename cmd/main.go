@@ -18,7 +18,7 @@ func main() {
 
 	flag.Usage = usage
 	//front
-	subcmd := flag.String("cmd", "help", "dicorn type [memcache|...]")
+	subcmd := flag.String("cmd", "help", "dicorn type [memcache|cassandra|...]")
 	listen := flag.String("listen", "localhost:9979", "listen port")
 	//backend
 	backend := flag.String("backend", "mem", "[mem|riak]")
@@ -30,6 +30,8 @@ func main() {
 	switch *subcmd {
 	case "memcache":
 		dicorn.Run(*listen, *backend, *backend_hosts)
+	case "cassandra":
+		dicorn.RunCass(*listen, *backend, *backend_hosts)
 	case "help": usage()
 	default:     usage()
 	}
