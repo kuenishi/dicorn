@@ -11,12 +11,13 @@ raw http interface -----+   +--------+   +-- Riak backend
 cassandra interface ----+   +--------+   +-- spam backend
                         |                |
 hbase interface --------+                +-- memory backend
-
 ```
 
 Dunno all of this get success.
 
 - [memcache interface](https://github.com/memcached/memcached/blob/master/doc/protocol.txt)
+- [Cassandra interface](https://git-wip-us.apache.org/repos/asf?p=cassandra.git;a=blob;f=interface/cassandra.thrift;hb=HEAD)
+- [HBase interface](http://svn.apache.org/viewvc/hbase/trunk/hbase-server/src/main/resources/org/apache/hadoop/hbase/thrift/Hbase.thrift?view=markup)
 
 ## quickstart
 
@@ -84,3 +85,10 @@ Yay! So slow.
 ## license
 
 Apache 2.0
+
+
+## misc.
+
+Cassandra interface is generaged via [go-thrift by @samuel](https://github.com/samuel/go-thrift) .
+
+Also using [goprotobuf](https://code.google.com/p/goprotobuf/) for Protocol Buffers.
